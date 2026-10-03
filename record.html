@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>狼人杀 - 对局记录</title>
+<link rel="stylesheet" href="style.css?v=3">
+</head>
+<body class="record-body">
+<div class="record-container">
+    <header class="record-header">
+        <h1>对局记录</h1>
+        <div class="header-actions">
+            <button class="btn-reset" onclick="clearAll()">清空全部</button>
+            <button class="btn-primary" onclick="backToConfig()">返回配置</button>
+        </div>
+    </header>
+
+    <nav class="tab-bar" id="tabBar">
+        <button class="tab-btn active" data-tab="identity" onclick="switchTab('identity')">身份标记</button>
+        <button class="tab-btn" data-tab="nights" onclick="switchTab('nights')">夜晚情况</button>
+        <button class="tab-btn" data-tab="speech" onclick="switchTab('speech')">发言记录</button>
+    </nav>
+
+    <section class="tab-pane active" id="pane-identity">
+        <div class="pane-body">
+            <div class="avatar-grid" id="identityList"></div>
+        </div>
+    </section>
+
+    <section class="tab-pane" id="pane-nights">
+        <div class="pane-body nights-body">
+            <div class="nights-list" id="nightsList"></div>
+        </div>
+    </section>
+
+    <section class="tab-pane" id="pane-speech">
+        <div class="pane-body speech-list" id="speechList"></div>
+    </section>
+</div>
+
+<!-- 玩家标记弹窗 -->
+<div class="modal-overlay" id="playerModal" onclick="onOverlayClick(event)">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="modalTitle">玩家标记</h3>
+            <button class="modal-close" onclick="closeModal()" aria-label="关闭">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-section is-compact">
+                <div class="modal-label">
+                    身份标记
+                    <span class="modal-label-tip">点击循环：无 → 怀疑 → 锁定</span>
+                </div>
+                <div class="suspect-grid" id="suspectGrid"></div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-label">警长</div>
+                <button class="sheriff-toggle" id="sheriffToggle" onclick="toggleSheriff()">
+                    <span class="sheriff-star">★</span>
+                    <span id="sheriffText">设为警长</span>
+                </button>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-primary btn-full" onclick="closeModal()">完成</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 夜晚编辑弹窗（键盘式） -->
+<div class="modal-overlay modal-overlay-sub" id="nightEditorModal" onclick="onNightEditorOverlayClick(event)">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="nightEditorTitle">第 1 夜</h3>
+            <button class="modal-close" onclick="closeNightEditor()" aria-label="关闭">×</button>
+        </div>
+        <div class="modal-body">
+
+            <div class="kb-section">
+                <div class="kb-label">序号</div>
+                <div class="kb-row" id="kbNumbers"></div>
+            </div>
+
+            <div class="kb-section">
+                <div class="kb-label">动作</div>
+                <div class="kb-row" id="kbActions"></div>
+            </div>
+
+            <div class="kb-section">
+                <div class="kb-label">死亡方式</div>
+                <div class="kb-row" id="kbDeaths"></div>
+            </div>
+
+            <div class="kb-section">
+                <div class="kb-label">身份</div>
+                <div class="kb-row" id="kbIdentities"></div>
+            </div>
+
+            <div class="kb-section">
+                <div class="kb-label">语句</div>
+                <div class="stmt-list" id="stmtList"></div>
+                <button class="stmt-add" onclick="addStatement()">+ 添加语句</button>
+            </div>
+
+            <div class="night-editor-actions">
+                <button class="btn-reset" onclick="deleteCurrentNight()">删除此夜</button>
+                <button class="btn-primary" onclick="closeNightEditor()">完成</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 发言编辑弹窗（键盘式 · 玩家 / 轮次） -->
+<div class="modal-overlay modal-overlay-sub" id="speechEditorModal" onclick="onSpeechEditorOverlayClick(event)">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="speechEditorTitle">1 号 · 第 1 轮</h3>
+            <button class="modal-close" onclick="closeSpeechEditor()" aria-label="关闭">×</button>
+        </div>
+        <div class="modal-body">
+
+            <div class="kb-section">
+                <div class="kb-label">序号</div>
+                <div class="kb-row" id="spKbNumbers"></div>
+            </div>
+
+            <div class="kb-section">
+                <div class="kb-label">动作</div>
+                <div class="kb-row" id="spKbActions"></div>
+            </div>
+
+            <!-- ★ 自拟栏（新增） -->
+            <div class="kb-section">
+                <div class="kb-label">自拟</div>
+                <div class="kb-row" id="spKbTitles"></div>
+            </div>
+
+            <div class="kb-section">
+                <div class="kb-label">身份</div>
+                <div class="kb-row" id="spKbIdentities"></div>
+            </div>
+
+            <div class="kb-section">
+                <div class="kb-label">语句</div>
+                <div class="stmt-list" id="spStmtList"></div>
+                <button class="stmt-add" onclick="addSpeechStatement()">+ 添加语句</button>
+            </div>
+
+            <div class="night-editor-actions">
+                <button class="btn-reset" onclick="deleteCurrentSpeechRound()">删除此轮</button>
+                <button class="btn-primary" onclick="closeSpeechEditor()">完成</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="record.js?v=3"></script>
+</body>
+</html>

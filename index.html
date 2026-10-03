@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>狼人杀 - 身份配置</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>狼人杀配置</h1>
+
+    <!-- 第一步：输入总人数 -->
+    <div class="card">
+        <h2>第一步：设置玩家总人数</h2>
+        <div class="center-input-wrap">
+            <input id="totalPlayer" type="number" min="7" max="20" value="10" placeholder="输入7~20">
+        </div>
+        <div class="btn-row">
+            <button class="btn-primary" onclick="showIdentityPanel()">确认，配置身份</button>
+        </div>
+    </div>
+
+    <!-- 第二步：身份配置面板 -->
+    <div class="card identity-wrap" id="identityPanel">
+        <h2>第二步：配置身份数量</h2>
+
+        <div class="row">
+            <label>狼人</label>
+            <input id="wolf" type="number" min="0" value="3" />
+        </div>
+        <div class="row">
+            <label>平民</label>
+            <input id="civil" type="number" min="0" value="4" />
+        </div>
+        <div class="row">
+            <label>预言家</label>
+            <input id="seer" type="number" min="0" value="1" />
+        </div>
+        <div class="row">
+            <label>女巫</label>
+            <input id="witch" type="number" min="0" value="1" />
+        </div>
+        <div class="row">
+            <label>猎人</label>
+            <input id="hunter" type="number" min="0" value="1" />
+        </div>
+        <div class="row">
+            <label>白痴</label>
+            <input id="idiot" type="number" min="0" value="0" />
+        </div>
+        <div class="row">
+            <label>守卫</label>
+            <input id="guard" type="number" min="0" value="0" />
+        </div>
+
+        <!-- 动态自定义身份 -->
+        <div id="customIdentityContainer"></div>
+
+        <!-- 添加自定义身份 -->
+        <div class="add-custom">
+            <div class="custom-input-row">
+                <input id="customName" type="text" placeholder="身份名称，例如白狼王">
+                <input id="customCount" type="number" min="0" value="1">
+                <button class="btn-add" onclick="addCustomIdentity()">添加</button>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn-reset" onclick="resetAll()">重置</button>
+            <button class="btn-preset" onclick="openPresetPanel()">选择预设</button>
+            <button class="btn-primary" onclick="saveConfig()">保存配置</button>
+            <button class="btn-primary" onclick="confirmAndRecord()">确定</button>
+        </div>
+
+        <div class="tip" id="tipBox"></div>
+    </div>
+
+    <div class="footer-text">
+        配置完成后，可继续扩展对局记录功能
+    </div>
+</div>
+
+<!-- 预设选择弹窗 -->
+<div class="modal-overlay" id="presetModal" onclick="onOverlayClick(event)">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>选择预设</h3>
+            <button class="modal-close" onclick="closePresetPanel()" aria-label="关闭">×</button>
+        </div>
+        <div class="modal-body" id="presetList"></div>
+    </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
